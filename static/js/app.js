@@ -19,10 +19,24 @@ const errorState = document.getElementById('error-state');
 const emptyState = document.getElementById('empty-state');
 const lastUpdatedText = document.getElementById('last-updated-text');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const scrollToTopBtn = document.getElementById('scroll-to-top');
+
+// Sidebar Drawer Elements
+const sidebar = document.querySelector('.sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
 
 // Stat Elements
 const statTotal = document.getElementById('stat-total');
 const statFeatures = document.getElementById('stat-features');
+
+// Category Counters
+const countAll = document.getElementById('count-all');
+const countFeature = document.getElementById('count-feature');
+const countAnnouncement = document.getElementById('count-announcement');
+const countDeprecation = document.getElementById('count-deprecation');
+const countFix = document.getElementById('count-fix');
 
 // Modal Elements
 const tweetModal = document.getElementById('tweet-modal');
@@ -66,6 +80,9 @@ function setupEventListeners() {
             btn.classList.add('active');
             state.activeFilter = btn.dataset.filter;
             filterAndRender();
+            
+            // Close mobile sidebar drawer after click
+            closeSidebar();
         });
     });
 
@@ -83,6 +100,50 @@ function setupEventListeners() {
 
     // Submit Tweet
     submitTweetBtn.addEventListener('click', postTweet);
+
+    // Scroll to Top behavior
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollToTopBtn.classList.add('show');
+        } else {
+            scrollToTopBtn.classList.remove('show');
+        }
+    });
+    
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Mobile Sidebar Drawer Toggle
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', openSidebar);
+    }
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', closeSidebar);
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+        // Escape to close active modal or sidebar
+        if (e.key === 'Escape') {
+            if (!tweetModal.classList.contains('hidden')) {
+                closeTweetModal();
+            }
+            closeSidebar();
+        }
+        
+        // Ctrl/Cmd + K to focus Search
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
 }
 
 // Fetch Releases from Backend
@@ -280,8 +341,22 @@ function renderTimeline() {
 
 // Update Stats
 function updateStats() {
-    statTotal.textContent = state.releases.length;
-    statFeatures.textContent = state.releases.filter(r => r.type === 'feature').length;
+    const total = state.releases.length;
+    const features = state.releases.filter(r => r.type === 'feature').length;
+    const announcements = state.releases.filter(r => r.type === 'announcement').length;
+    const deprecations = state.releases.filter(r => r.type === 'deprecation').length;
+    const fixes = state.releases.filter(r => r.type === 'fix').length;
+
+    // Sidebar Stats Card
+    statTotal.textContent = total;
+    statFeatures.textContent = features;
+
+    // Filter Badges
+    if (countAll) countAll.textContent = total;
+    if (countFeature) countFeature.textContent = features;
+    if (countAnnouncement) countAnnouncement.textContent = announcements;
+    if (countDeprecation) countDeprecation.textContent = deprecations;
+    if (countFix) countFix.textContent = fixes;
 }
 
 // Update Last Updated Timestamp
@@ -422,4 +497,17 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('color-theme', newTheme);
+}
+
+// --- Sidebar Mobile Actions ---
+function openSidebar() {
+    if (sidebar) sidebar.classList.add('open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
+    state.sidebarOpen = true;
+}
+
+function closeSidebar() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+    state.sidebarOpen = false;
 }

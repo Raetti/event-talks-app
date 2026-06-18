@@ -798,18 +798,167 @@ body {
     gap: 0.75rem;
 }
 
+/* Sidebar Close Button & Mobile Hamburger Styles */
+.sidebar-close-btn, .mobile-toggle-btn {
+    display: none;
+}
+
+.title-container-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-count {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+[data-theme="light"] .filter-count {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.filter-btn.active .filter-count {
+    border-color: rgba(56, 189, 248, 0.2);
+    color: var(--primary);
+}
+
+/* Scroll to Top Button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+}
+
+.scroll-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(56, 189, 248, 0.5);
+}
+
+.scroll-to-top svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(7, 10, 19, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 98;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* Responsive CSS */
 @media (max-width: 900px) {
     .app-container {
         flex-direction: column;
     }
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 1.5rem;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
+        position: fixed;
+        top: 0;
+        left: -320px; /* Hidden off-screen */
+        width: 320px;
+        height: 100vh;
+        z-index: 100;
+        padding: 2rem 1.5rem;
+        border-right: 1px solid var(--border-color);
+        border-bottom: none;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4);
+    }
+    .sidebar.open {
+        left: 0;
+    }
+    .sidebar-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        margin-left: auto;
+        transition: all var(--transition-speed);
+    }
+    .sidebar-close-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+    [data-theme="light"] .sidebar-close-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+    }
+    .sidebar-close-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    .mobile-toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: all var(--transition-speed);
+    }
+    .mobile-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+    }
+    [data-theme="light"] .mobile-toggle-btn {
+        background: rgba(0, 0, 0, 0.02);
+    }
+    [data-theme="light"] .mobile-toggle-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+    }
+    .mobile-toggle-btn svg {
+        width: 20px;
+        height: 20px;
     }
     .main-content {
         margin-left: 0;

@@ -22,6 +22,12 @@
                     </svg>
                 </div>
                 <h2>BigQuery Notes</h2>
+                <button id="sidebar-close-btn" class="sidebar-close-btn" title="Close Filters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             
             <div class="sidebar-content">
@@ -38,18 +44,25 @@
                 <div class="filter-section">
                     <h3>Filter by Type</h3>
                     <div class="filter-buttons">
-                        <button class="filter-btn active" data-filter="all">All Updates</button>
+                        <button class="filter-btn active" data-filter="all">
+                            <span>All Updates</span>
+                            <span class="filter-count" id="count-all">0</span>
+                        </button>
                         <button class="filter-btn" data-filter="feature">
-                            <span class="dot feature"></span> Features
+                            <span class="dot feature"></span> <span>Features</span>
+                            <span class="filter-count" id="count-feature">0</span>
                         </button>
                         <button class="filter-btn" data-filter="announcement">
-                            <span class="dot announcement"></span> Announcements
+                            <span class="dot announcement"></span> <span>Announcements</span>
+                            <span class="filter-count" id="count-announcement">0</span>
                         </button>
                         <button class="filter-btn" data-filter="deprecation">
-                            <span class="dot deprecation"></span> Deprecations
+                            <span class="dot deprecation"></span> <span>Deprecations</span>
+                            <span class="filter-count" id="count-deprecation">0</span>
                         </button>
                         <button class="filter-btn" data-filter="fix">
-                            <span class="dot fix"></span> Fixes
+                            <span class="dot fix"></span> <span>Fixes</span>
+                            <span class="filter-count" id="count-fix">0</span>
                         </button>
                     </div>
                 </div>
@@ -81,7 +94,16 @@
         <main class="main-content">
             <header class="header">
                 <div class="header-title">
-                    <h1>Release Timeline</h1>
+                    <div class="title-container-mobile">
+                        <button id="sidebar-toggle-btn" class="mobile-toggle-btn" title="Toggle Filters">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                        <h1>Release Timeline</h1>
+                    </div>
                     <p class="subtitle">Stay updated with the latest BigQuery additions and changes</p>
                 </div>
                 <div class="header-actions">
@@ -185,6 +207,14 @@
             </div>
         </div>
     </div>
+    
+    <!-- Floating and Overlay Elements -->
+    <div class="sidebar-overlay hidden" id="sidebar-overlay"></div>
+    <button id="scroll-to-top" class="scroll-to-top" title="Scroll to Top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
 
     <!-- JS -->
     <script src="/static/js/app.js"></script>
