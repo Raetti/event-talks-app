@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Notes Explorer</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h2>BigQuery Notes</h2>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search updates...">
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Filter by Type</h3>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All Updates</button>
+                        <button class="filter-btn" data-filter="feature">
+                            <span class="dot feature"></span> Features
+                        </button>
+                        <button class="filter-btn" data-filter="announcement">
+                            <span class="dot announcement"></span> Announcements
+                        </button>
+                        <button class="filter-btn" data-filter="deprecation">
+                            <span class="dot deprecation"></span> Deprecations
+                        </button>
+                        <button class="filter-btn" data-filter="fix">
+                            <span class="dot fix"></span> Fixes
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-total">0</span>
+                        <span class="stat-label">Total Releases</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-features">0</span>
+                        <span class="stat-label">Features</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>Google Cloud BigQuery Feed</p>
+                <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" class="feed-link">
+                    <span>View XML Feed</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                    </svg>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-title">
+                    <h1>Release Timeline</h1>
+                    <p class="subtitle">Stay updated with the latest BigQuery additions and changes</p>
+                </div>
+                <div class="header-actions">
+                    <div class="last-updated" id="last-updated-text">Not updated yet</div>
+                    <button id="refresh-btn" class="btn btn-primary">
+                        <svg class="spinner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        <span>Refresh Feed</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Timeline container -->
+                <div class="timeline-container">
+                    <div class="loading-state" id="loading-state">
+                        <div class="pulse-spinner"></div>
+                        <p>Fetching BigQuery release notes...</p>
+                    </div>
+
+                    <div class="error-state hidden" id="error-state">
+                        <div class="error-icon">⚠️</div>
+                        <p id="error-message">Failed to load release notes. Please try again.</p>
+                        <button id="retry-btn" class="btn btn-secondary">Retry</button>
+                    </div>
+
+                    <div class="empty-state hidden" id="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>No release notes found matching your filters.</p>
+                    </div>
+
+                    <div class="timeline" id="timeline-list">
+                        <!-- Timeline items will be injected here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Tweet Modal Composer -->
+    <div class="modal-overlay hidden" id="tweet-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Share on X / Twitter</h3>
+                <button class="close-btn" id="close-modal-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Draft and customize your post about this update before sharing.</p>
+                
+                <div class="tweet-preview-container">
+                    <textarea id="tweet-textarea" rows="6" maxlength="280"></textarea>
+                    
+                    <div class="tweet-composer-footer">
+                        <div class="char-count-wrapper">
+                            <svg class="progress-ring" width="36" height="36">
+                                <circle class="progress-ring__circle-bg" stroke="#1e293b" stroke-width="3" fill="transparent" r="14" cx="18" cy="18"/>
+                                <circle class="progress-ring__circle" id="char-progress" stroke="#38bdf8" stroke-width="3" fill="transparent" r="14" cx="18" cy="18"/>
+                            </svg>
+                            <span id="char-count">280</span>
+                        </div>
+                        
+                        <div class="composer-actions">
+                            <button id="copy-tweet-btn" class="btn btn-secondary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Copy Text</span>
+                            </button>
+                            <button id="submit-tweet-btn" class="btn btn-x">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                                <span>Post on X</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
