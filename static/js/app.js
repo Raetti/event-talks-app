@@ -18,6 +18,7 @@ const loadingState = document.getElementById('loading-state');
 const errorState = document.getElementById('error-state');
 const emptyState = document.getElementById('empty-state');
 const lastUpdatedText = document.getElementById('last-updated-text');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 // Stat Elements
 const statTotal = document.getElementById('stat-total');
@@ -37,6 +38,7 @@ const CIRCUMFERENCE = 2 * Math.PI * 14;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initProgressRing();
     fetchReleases();
     setupEventListeners();
@@ -46,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     refreshBtn.addEventListener('click', fetchReleases);
     retryBtn.addEventListener('click', fetchReleases);
+    
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
     
     // Search input
     searchInput.addEventListener('input', (e) => {
@@ -403,4 +409,17 @@ function postTweet() {
         window.open(twitterUrl, '_blank');
         closeTweetModal();
     }
+}
+
+// --- Theme Logic ---
+function initTheme() {
+    const savedTheme = localStorage.getItem('color-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('color-theme', newTheme);
 }
